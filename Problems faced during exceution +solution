@@ -1,0 +1,110 @@
+🔹 1. Python & Package Issues
+
+Difficulty:
+Installing heavy packages like transformers, torch, or scikit-learn may fail due to large size (similar to your earlier “No space left on device” error).
+
+Solution:
+
+Use a requirements.txt with specific versions.
+
+Add --no-cache-dir when installing inside Docker.
+
+If using small instances, switch to lightweight models like distilbert-base-uncased.
+
+🔹 2. Database Connection
+
+Difficulty:
+
+SQLite works locally but is not ideal for Kubernetes (single file DB).
+
+MySQL/Postgres in K8s needs ConfigMaps + Secrets for credentials.
+
+Solution:
+
+Start with SQLite for learning.
+
+For real showcase, configure MySQL in a separate Pod or external DB (like RDS).
+
+🔹 3. Docker Image Size
+
+Difficulty:
+AI libraries make your Docker image very large (>1GB), which is slow to build/push/pull.
+
+Solution:
+
+Use multi-stage Docker builds.
+
+Use slim base images (python:3.9-slim).
+
+Exclude unnecessary files via .dockerignore.
+
+🔹 4. Kubernetes Networking
+
+Difficulty:
+
+Your Flask app runs on 5000, but Service/Ingress must map correctly.
+
+If using ClusterIP, you can’t access externally.
+
+Solution:
+
+Use NodePort or Ingress to expose.
+
+Verify with kubectl port-forward before external exposure.
+
+🔹 5. ConfigMaps & Secrets
+
+Difficulty:
+Beginners confuse where to use ConfigMap vs Secret.
+
+Solution:
+
+ConfigMap → Non-sensitive (DB name, host).
+
+Secret → Sensitive (DB password, API key).
+Mount them as env variables into Flask container.
+
+🔹 6. Horizontal Pod Autoscaler (HPA)
+
+Difficulty:
+
+HPA requires metrics-server installed in your cluster.
+
+Without it, scaling won’t work.
+
+Solution:
+Install metrics server:
+
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+🔹 7. Storage & Logs
+
+Difficulty:
+
+DB storage may vanish if Pod restarts.
+
+Logs may not be visible after container exit.
+
+Solution:
+
+Use PersistentVolume for DB.
+
+Check logs with:
+
+kubectl logs <pod-name>
+
+🔹 8. Cloud Resource Limits
+
+Difficulty:
+Running AI + SQL + Kubernetes in small AWS free-tier EC2 (like t2.micro) may crash.
+
+Solution:
+Use at least t3.medium or bigger for smooth execution.
+
+🔹 9. CI/CD Integration
+
+Difficulty:
+If you try Jenkins/GitHub Actions, Docker build & push may fail due to runner limits.
+
+Solution:
+Start with local builds, later connect CI/CD pipelines.
